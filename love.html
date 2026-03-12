@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>❤️ 专属小惊喜</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .container {
+            text-align: center;
+            z-index: 10;
+            padding: 20px;
+        }
+        
+        .title {
+            font-size: 28px;
+            color: #e74c3c;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .emoji {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .message {
+            font-size: 20px;
+            color: #555;
+            margin-bottom: 40px;
+            line-height: 1.6;
+            min-height: 60px;
+        }
+        
+        .btn-container {
+            position: relative;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+        }
+        
+        .btn {
+            padding: 15px 40px;
+            font-size: 18px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-yes {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a6f);
+            color: white;
+        }
+        
+        .btn-yes:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255,107,107,0.4);
+        }
+        
+        .btn-no {
+            background: #bdc3c7;
+            color: #555;
+            position: absolute;
+        }
+        
+        .hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            animation: fall linear;
+            opacity: 0.6;
+        }
+        
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .final-message {
+            display: none;
+            animation: fadeIn 1s ease-in;
+        }
+        
+        .final-message.show {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .big-heart {
+            font-size: 120px;
+            animation: heartbeat 1s ease-in-out infinite;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        .love-text {
+            font-size: 24px;
+            color: #e74c3c;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .click-hint {
+            font-size: 14px;
+            color: #999;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hearts" id="hearts"></div>
+    
+    <div class="container" id="mainContainer">
+        <div class="emoji" id="emoji">🥺</div>
+        <h1 class="title" id="title">宝贝，别生气了好不好？</h1>
+        <p class="message" id="message">我知道错啦，原谅我好不好嘛~</p>
+        
+        <div class="btn-container" id="btnContainer">
+            <button class="btn btn-yes" id="btnYes" onclick="sayYes()">好，原谅你</button>
+            <button class="btn btn-no" id="btnNo" onclick="sayNo()">不原谅</button>
+        </div>
+        
+        <p class="click-hint" id="hint">（试试点"不原谅"看看会发生什么）</p>
+    </div>
+    
+    <div class="container final-message" id="finalMessage">
+        <div class="big-heart">❤️</div>
+        <p class="love-text">就知道你最好啦！<br>爱你哟~ 😘</p>
+        <p style="margin-top: 30px; color: #666;">发送给你的大笨蛋</p>
+    </div>
+
+    <script>
+        const messages = [
+            "我知道错啦，原谅我好不好嘛~",
+            "别这样嘛，我真的知道错了😢",
+            "你生气的样子也很可爱，但我更想看你笑🥰",
+            "我给你买好吃的好不好？🍰",
+            "我保证下次不会了！真的！🙏",
+            "你忍心看我一直可怜巴巴的吗🥺",
+            "我最喜欢你啦，别生气了好不好💕",
+            "抱抱~ 不生气了好不好🤗",
+            "我错了，你打我骂我都行，别不理我😭",
+            "我的小仙女最美了，笑一个嘛✨"
+        ];
+        
+        let noCount = 0;
+        const btnNo = document.getElementById('btnNo');
+        const messageEl = document.getElementById('message');
+        const emojiEl = document.getElementById('emoji');
+        const titleEl = document.getElementById('title');
+        
+        // 按钮逃跑效果
+        btnNo.addEventListener('mouseover', runAway);
+        btnNo.addEventListener('touchstart', runAway, {passive: true});
+        
+        function runAway(e) {
+            if (noCount >= 5) return;
+            
+            const container = document.getElementById('btnContainer');
+            const rect = container.getBoundingClientRect();
+            
+            const maxX = rect.width - btnNo.offsetWidth - 20;
+            const maxY = rect.height - btnNo.offsetHeight - 20;
+            
+            const randomX = Math.random() * maxX - maxX/2;
+            const randomY = Math.random() * maxY - maxY/2;
+            
+            btnNo.style.transform = `translate(${randomX}px, ${randomY}px)`;
+            
+            // 更换消息
+            noCount++;
+            if (noCount < messages.length) {
+                messageEl.textContent = messages[noCount];
+            }
+            
+            // 更换表情
+            const emojis = ['🥺', '😢', '🥹', '😭', '🥰', '😘', '🤗', '✨', '💖', '🌹'];
+            emojiEl.textContent = emojis[noCount % emojis.length];
+            
+            // 创建爱心
+            createHeart();
+        }
+        
+        function sayNo() {
+            if (noCount < 5) {
+                runAway();
+            } else {
+                messageEl.textContent = "你追不上我的！就不原谅！😝";
+            }
+        }
+        
+        function sayYes() {
+            document.getElementById('mainContainer').classList.add('hidden');
+            document.getElementById('finalMessage').classList.add('show');
+            
+            // 满屏爱心
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => createHeart(), i * 100);
+            }
+        }
+        
+        function createHeart() {
+            const hearts = document.getElementById('hearts');
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.textContent = ['❤️', '💖', '💕', '🧡', '💛', '💚', '💙', '💜'][Math.floor(Math.random() * 8)];
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.top = '-50px';
+            heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+            hearts.appendChild(heart);
+            
+            setTimeout(() => heart.remove(), 5000);
+        }
+        
+        // 自动飘爱心
+        setInterval(() => {
+            if (Math.random() > 0.7) createHeart();
+        }, 500);
+    </script>
+</body>
+</html>
